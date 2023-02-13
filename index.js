@@ -21,16 +21,21 @@ bot.on("message", async (msg) => {
     if(message == '/start'){
         return bot.sendMessage(chatId, "Selamat Datang dan silahkan tanya saya apa saja");
     }
-    let messageBot = await bot.sendMessage(chatId, "Tunggu Sebentar ya ...");
-    const response = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: message,
-        temperature: 0.7,
-        max_tokens: 256,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-    });
-    await bot.deleteMessage(chatId,messageBot.message_id);
-    await bot.sendMessage(chatId, response.data.choices[0].text);
+    let messageBot = await bot.sendMessage(chatId, "Sedang Mengetik ...");
+    try{
+        let response = await openai.createCompletion({
+            model: "text-davinci-003",
+            prompt: message,
+            temperature: 0.7,
+            max_tokens: 256,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+        });
+        await bot.deleteMessage(chatId,messageBot.message_id);
+        await bot.sendMessage(chatId, response.data.choices[0].text);
+    }catch(err){
+        await bot.deleteMessage(chatId,messageBot.message_id);
+        await bot.sendMessage(chatId, "Maaf bisa diulangi"); 
+    }
 });
